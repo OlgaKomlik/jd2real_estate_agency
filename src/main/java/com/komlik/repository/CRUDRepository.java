@@ -1,6 +1,7 @@
 package com.komlik.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 //K - key, datatype of PK
 //T - type of object
@@ -11,7 +12,7 @@ public interface CRUDRepository <K, T> {
 //    Update
 //    Delete
 
-    T findOne(K id);
+    Optional<T> findOne(K id);
 
     List<T> findAll();
 
@@ -20,4 +21,6 @@ public interface CRUDRepository <K, T> {
     T update(T object);
 
     void delete(K id);
+
+    void hardDelete(K id);
 }

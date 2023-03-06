@@ -8,6 +8,7 @@ import java.sql.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 //bean id=userRepositoryImpl   class=UserRepositoryImpl
@@ -75,7 +76,8 @@ public class PersonRepositoryImpl implements PersonRepository {
             person.setChanged(rs.getTimestamp(CHANGED));
             person.setIs_Deleted(rs.getBoolean(IS_DELETED));
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            System.err.println(e.getMessage());
+            throw new RuntimeException("SQL Issues!");
         }
 
         return person;
@@ -100,23 +102,38 @@ public class PersonRepositoryImpl implements PersonRepository {
     }
 
     @Override
-    public Person findOne(Long id) {
+    public Optional<Person> findOne(Long id) {
         final String findOne = "SELECT * FROM persons WHERE id = ?";
         registerDriver();
-        List<Person> result = new ArrayList<>();
+        String name = "";
+        String surname = "";
+        Timestamp birthDate = null;
+        String passportNum = "";
+        String phoneNum = "";
+        Timestamp created = null;
+        Timestamp changed = null;
+        boolean isDeleted = false;
         try(Connection connection = getConnection();
             PreparedStatement preparedStatement = connection.prepareStatement(findOne)
            ) {
             preparedStatement.setLong(1, id);
             ResultSet rs = preparedStatement.executeQuery();
-            while (rs.next()) {
-                result.add(parseResultSet(rs));
+            if (rs.next()) {
+                 name = rs.getString("name");
+                 surname = rs.getString("surname");
+                 birthDate = rs.getTimestamp("birth_date");
+                 passportNum = rs.getString("passport_num");
+                 phoneNum = rs.getString("phone_num");
+                 created = rs.getTimestamp("created");
+                 changed =rs.getTimestamp("changed");
+                 isDeleted = rs.getBoolean("is_deleted");
             }
             rs.close();
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            System.err.println(e.getMessage());
+            throw new RuntimeException("SQL Issues!");
         }
-        return result.size() == 1 ? result.get(0) : null;
+        return Optional.of(new Person(id, name,surname, birthDate, passportNum, phoneNum, created, changed, isDeleted));
     }
 
     @Override
@@ -135,7 +152,8 @@ public class PersonRepositoryImpl implements PersonRepository {
             preparedStatement.setTimestamp(7, person.getChanged());
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            System.err.println(e.getMessage());
+            throw new RuntimeException("SQL Issues!");
         }
         return person;
     }
@@ -156,7 +174,8 @@ public class PersonRepositoryImpl implements PersonRepository {
             preparedStatement.setLong(8, person.getId());
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            System.err.println(e.getMessage());
+            throw new RuntimeException("SQL Issues!");
         }
         return person;
     }
@@ -171,8 +190,66 @@ public class PersonRepositoryImpl implements PersonRepository {
             preparedStatement.setLong(2, id);
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            System.err.println(e.getMessage());
+            throw new RuntimeException("SQL Issues!");
         }
+    }
+    @Override
+    public void hardDelete(Long id) {
+        final String hardDeleteQuery = "delete from users where id = ?";
+        registerDriver();
+        try (Connection connection = getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(hardDeleteQuery)) {
+            preparedStatement.setLong(1, id);
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+            throw new RuntimeException("SQL Issues!");
+        }
+    }
+
+    @Override
+    public List<Person> findForSurnameAndName(String surname, String name) {
+        final String findOne = "SELECT * FROM persons WHERE surname = ? AND name = ?";
+        registerDriver();
+        List<Person> result = new ArrayList<>();
+        try(Connection connection = getConnection();
+            PreparedStatement preparedStatement = connection.prepareStatement(findOne)
+        ) {
+            preparedStatement.setString(1, surname);
+            preparedStatement.setString(2, name);
+            ResultSet rs = preparedStatement.executeQuery();
+            while (rs.next()) {
+                result.add(parseResultSet(rs));
+            }
+            rs.close();
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+            throw new RuntimeException("SQL Issues!");
+        }
+        return result;
+    }
+
+@Override
+    public List<Person> findBirthdayPersons(LocalDateTime localDateTime) {
+        final String findOne = "SELECT * FROM persons WHERE EXTRACT(day from birth_date) = ? AND EXTRACT(month from birth_date) = ?";
+        registerDriver();
+        List<Person> result = new ArrayList<>();
+        try(Connection connection = getConnection();
+            PreparedStatement preparedStatement = connection.prepareStatement(findOne)
+        ) {
+            preparedStatement.setInt(1, localDateTime.getDayOfMonth());
+            preparedStatement.setInt(2, localDateTime.getMonthValue());
+            ResultSet rs = preparedStatement.executeQuery();
+            while (rs.next()) {
+                result.add(parseResultSet(rs));
+            }
+            rs.close();
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+            throw new RuntimeException("SQL Issues!");
+        }
+        return result;
     }
 
     @Override
