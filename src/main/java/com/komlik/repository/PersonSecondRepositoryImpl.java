@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-@Primary
+//@Primary
 public class PersonSecondRepositoryImpl implements PersonRepository {
 
     @Override

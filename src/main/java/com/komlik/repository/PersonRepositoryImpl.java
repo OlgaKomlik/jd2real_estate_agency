@@ -1,7 +1,10 @@
 package com.komlik.repository;
 
+import com.komlik.configuration.DatabaseProperties;
 import com.komlik.domain.Person;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
 
 import java.sql.*;
@@ -11,16 +14,11 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
+@Primary
+@RequiredArgsConstructor
 //bean id=userRepositoryImpl   class=UserRepositoryImpl
 //@Component
 public class PersonRepositoryImpl implements PersonRepository {
-
-    public static final String POSTRGES_DRIVER_NAME = "org.postgresql.Driver";
-    public static final String DATABASE_URL = "jdbc:postgresql://localhost:";
-    public static final int DATABASE_PORT = 5432;
-    public static final String DATABASE_NAME = "/real_estate_agency";
-    public static final String DATABASE_LOGIN = "postgres";
-    public static final String DATABASE_PASSWORD = "root";
 
     private static final String ID = "id";
     private static final String NAME = "name";
@@ -30,8 +28,9 @@ public class PersonRepositoryImpl implements PersonRepository {
     private static final String PHONE_NUM = "phone_num";
     private static final String CREATED = "created";
     private static final String CHANGED = "changed";
-
     private static final String IS_DELETED = "is_deleted";
+
+    private final DatabaseProperties properties;
 
     @Override
     public List<Person> findAll() {
@@ -85,7 +84,7 @@ public class PersonRepositoryImpl implements PersonRepository {
 
     private void registerDriver() {
         try {
-            Class.forName(POSTRGES_DRIVER_NAME);
+            Class.forName(properties.getDriverName());
         } catch (ClassNotFoundException e) {
             System.err.println("JDBC Driver Cannot be loaded!");
             throw new RuntimeException("JDBC Driver Cannot be loaded!");
@@ -93,9 +92,9 @@ public class PersonRepositoryImpl implements PersonRepository {
     }
 
     private Connection getConnection() {
-        String jdbcURL = StringUtils.join(DATABASE_URL, DATABASE_PORT, DATABASE_NAME);
+        String jdbcURL = StringUtils.join(properties.getUrl(), properties.getPort(), properties.getName());
         try {
-            return DriverManager.getConnection(jdbcURL, DATABASE_LOGIN, DATABASE_PASSWORD);
+            return DriverManager.getConnection(jdbcURL, properties.getLogin(), properties.getPassword());
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -180,8 +179,8 @@ public class PersonRepositoryImpl implements PersonRepository {
         return person;
     }
 
-    @Override
-    public void delete(Long id) {
+        @Override
+        public void delete(Long id) {
         String deleteQuery = "UPDATE persons SET  is_Deleted = true, changed = ? WHERE id = ?";
         registerDriver();
         try (Connection connection = getConnection();

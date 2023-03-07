@@ -4,6 +4,8 @@ package com.komlik.controller;
 import com.komlik.domain.Person;
 import com.komlik.service.PersonService;
 import com.komlik.service.PersonServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -14,9 +16,11 @@ import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Controller
 public class FrontController extends HttpServlet {
 
-    private final PersonService personService = new PersonServiceImpl();
+    @Autowired
+    private PersonService personService;
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

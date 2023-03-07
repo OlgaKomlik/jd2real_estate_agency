@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.util.Calendar;
 import java.util.List;
 
 @Service
@@ -33,11 +35,9 @@ public class PersonServiceImpl implements PersonService {
     @Override
     public Person create(Person object) {
         /*Validation layer*/
-
-        if (object.getBirthDate().after(Timestamp.valueOf("2005-01-01"))) {
-            throw new RuntimeException("Something wrong!");
+        if (object.getBirthDate().after(Timestamp.valueOf(LocalDateTime.now().minusYears(18)))) {
+            throw new RuntimeException("Very young person!");
         }
-
         return personRepository.create(object);
     }
 

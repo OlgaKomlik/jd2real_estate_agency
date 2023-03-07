@@ -3,27 +3,33 @@ package com.komlik.service;
 import com.komlik.domain.Person;
 import com.komlik.repository.PersonRepository;
 import com.komlik.repository.PersonRepositoryImpl;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+@Service
 public class PersonAggServiceImpl implements PersonAggregationService {
-    private final PersonRepository personRepository = new PersonRepositoryImpl();
+
+    @Autowired
+    private PersonRepository personRepository;
+
+    public PersonAggServiceImpl(PersonRepository personRepository) {
+        this.personRepository = personRepository;
+    }
 
     @Override
-    public Map<String, Object> getStats() {
-
+    public Map<String, String> getUsersPhones() {
         List<Person> persons = personRepository.findAll();
-        Optional<Person> one = personRepository.findOne(2L);
-        personRepository.searchPerson();
-
-        Map<String, Object> resultMap = new HashMap<>();
-
-        resultMap.put("allPersons", persons);
-        resultMap.put("onePerson", one);
-
+        Map<String, String> resultMap = new HashMap<>();
+        for(Person person : persons) {
+            String fullName = person.getSurname() + " " + person.getName();
+            String phoneNum = person.getPhoneNum();
+            resultMap.put(fullName, phoneNum);
+        }
         return resultMap;
     }
 }

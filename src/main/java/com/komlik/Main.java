@@ -1,5 +1,6 @@
 package com.komlik;
 
+import com.komlik.configuration.DatabaseProperties;
 import com.komlik.domain.Person;
 import com.komlik.repository.PersonRepository;
 import com.komlik.repository.PersonRepositoryImpl;
@@ -10,7 +11,7 @@ import java.util.List;
 public class Main {
     public static void main(String[] args) {
 
-        PersonRepository personRepository = new PersonRepositoryImpl();
+        PersonRepository personRepository = new PersonRepositoryImpl(new DatabaseProperties());
 
        /* List<Person> all = personRepository.findAll();
 
