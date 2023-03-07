@@ -7,14 +7,13 @@ import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import java.util.Calendar;
 import java.util.List;
 
 @Service
 //id = userServiceImpl
 public class PersonServiceImpl implements PersonService {
-
-   @Autowired
+    public final int MIN_AGE = 18;
+    @Autowired
     private PersonRepository personRepository;
 
    /* public PersonServiceImpl(PersonRepository personRepository) {
@@ -35,7 +34,7 @@ public class PersonServiceImpl implements PersonService {
     @Override
     public Person create(Person object) {
         /*Validation layer*/
-        if (object.getBirthDate().after(Timestamp.valueOf(LocalDateTime.now().minusYears(18)))) {
+        if (object.getBirthDate().after(Timestamp.valueOf(LocalDateTime.now().minusYears(MIN_AGE)))) {
             throw new RuntimeException("Very young person!");
         }
         return personRepository.create(object);

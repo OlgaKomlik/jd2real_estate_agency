@@ -5,7 +5,7 @@ import java.util.Optional;
 
 //K - key, datatype of PK
 //T - type of object
-public interface CRUDRepository <K, T> {
+public interface CRUDRepository<K, T> {
     //    CRUD - operations
 //    Create - Insert
 //    Read - Select (by id, all, filtered)

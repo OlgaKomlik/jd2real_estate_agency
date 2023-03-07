@@ -23,7 +23,7 @@ public class Main {
         System.out.println(personRepository.findOne(2L));
         //System.out.println(personRepository.update(new Person(3L, "Max", "Orlov", Timestamp.valueOf(LocalDateTime.of(1989, 10, 15, 10, 55)), "MP4567896", "+35489652849", Timestamp.valueOf(LocalDateTime.now()), false)));
         //personRepository.delete(3L);
-       // System.out.println(personRepository.findForSurnameAndName("Orlov", "Max"));
-       // System.out.println(personRepository.findBirthdayPersons(LocalDateTime.of(2023, 03, 22, 11, 15)));
+        // System.out.println(personRepository.findForSurnameAndName("Orlov", "Max"));
+        // System.out.println(personRepository.findBirthdayPersons(LocalDateTime.of(2023, 03, 22, 11, 15)));
     }
 }

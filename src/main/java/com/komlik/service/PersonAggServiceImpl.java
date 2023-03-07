@@ -25,10 +25,10 @@ public class PersonAggServiceImpl implements PersonAggregationService {
     public Map<String, String> getUsersPhones() {
         List<Person> persons = personRepository.findAll();
         Map<String, String> resultMap = new HashMap<>();
-        for(Person person : persons) {
+        for (Person person : persons) {
             String fullName = person.getSurname() + " " + person.getName();
             String phoneNum = person.getPhoneNum();
-            resultMap.put(fullName, phoneNum);
+            resultMap.put(phoneNum, fullName);
         }
         return resultMap;
     }

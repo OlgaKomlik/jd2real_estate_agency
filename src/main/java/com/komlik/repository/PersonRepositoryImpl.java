@@ -7,7 +7,14 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
 
-import java.sql.*;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -112,27 +119,27 @@ public class PersonRepositoryImpl implements PersonRepository {
         Timestamp created = null;
         Timestamp changed = null;
         boolean isDeleted = false;
-        try(Connection connection = getConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement(findOne)
-           ) {
+        try (Connection connection = getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(findOne)
+        ) {
             preparedStatement.setLong(1, id);
             ResultSet rs = preparedStatement.executeQuery();
             if (rs.next()) {
-                 name = rs.getString("name");
-                 surname = rs.getString("surname");
-                 birthDate = rs.getTimestamp("birth_date");
-                 passportNum = rs.getString("passport_num");
-                 phoneNum = rs.getString("phone_num");
-                 created = rs.getTimestamp("created");
-                 changed =rs.getTimestamp("changed");
-                 isDeleted = rs.getBoolean("is_deleted");
+                name = rs.getString("name");
+                surname = rs.getString("surname");
+                birthDate = rs.getTimestamp("birth_date");
+                passportNum = rs.getString("passport_num");
+                phoneNum = rs.getString("phone_num");
+                created = rs.getTimestamp("created");
+                changed = rs.getTimestamp("changed");
+                isDeleted = rs.getBoolean("is_deleted");
             }
             rs.close();
         } catch (SQLException e) {
             System.err.println(e.getMessage());
             throw new RuntimeException("SQL Issues!");
         }
-        return Optional.of(new Person(id, name,surname, birthDate, passportNum, phoneNum, created, changed, isDeleted));
+        return Optional.of(new Person(id, name, surname, birthDate, passportNum, phoneNum, created, changed, isDeleted));
     }
 
     @Override
@@ -141,7 +148,7 @@ public class PersonRepositoryImpl implements PersonRepository {
                 "values (?, ?, ?, ?, ?, ?, ?)";
         registerDriver();
         try (Connection connection = getConnection();
-        PreparedStatement preparedStatement = connection.prepareStatement(createQuery)) {
+             PreparedStatement preparedStatement = connection.prepareStatement(createQuery)) {
             preparedStatement.setString(1, person.getName());
             preparedStatement.setString(2, person.getSurname());
             preparedStatement.setTimestamp(3, person.getBirthDate());
@@ -179,8 +186,8 @@ public class PersonRepositoryImpl implements PersonRepository {
         return person;
     }
 
-        @Override
-        public void delete(Long id) {
+    @Override
+    public void delete(Long id) {
         String deleteQuery = "UPDATE persons SET  is_Deleted = true, changed = ? WHERE id = ?";
         registerDriver();
         try (Connection connection = getConnection();
@@ -193,6 +200,7 @@ public class PersonRepositoryImpl implements PersonRepository {
             throw new RuntimeException("SQL Issues!");
         }
     }
+
     @Override
     public void hardDelete(Long id) {
         final String hardDeleteQuery = "delete from users where id = ?";
@@ -212,8 +220,8 @@ public class PersonRepositoryImpl implements PersonRepository {
         final String findOne = "SELECT * FROM persons WHERE surname = ? AND name = ?";
         registerDriver();
         List<Person> result = new ArrayList<>();
-        try(Connection connection = getConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement(findOne)
+        try (Connection connection = getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(findOne)
         ) {
             preparedStatement.setString(1, surname);
             preparedStatement.setString(2, name);
@@ -229,13 +237,13 @@ public class PersonRepositoryImpl implements PersonRepository {
         return result;
     }
 
-@Override
+    @Override
     public List<Person> findBirthdayPersons(LocalDateTime localDateTime) {
         final String findOne = "SELECT * FROM persons WHERE EXTRACT(day from birth_date) = ? AND EXTRACT(month from birth_date) = ?";
         registerDriver();
         List<Person> result = new ArrayList<>();
-        try(Connection connection = getConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement(findOne)
+        try (Connection connection = getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(findOne)
         ) {
             preparedStatement.setInt(1, localDateTime.getDayOfMonth());
             preparedStatement.setInt(2, localDateTime.getMonthValue());
