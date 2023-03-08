@@ -11,6 +11,4 @@ public interface PersonRepository extends CRUDRepository<Long, Person> {
     List<Person> findForSurnameAndName(String surname, String name);
 
     List<Person> findBirthdayPersons(LocalDateTime localDateTime);
-
-    void searchPerson();
 }

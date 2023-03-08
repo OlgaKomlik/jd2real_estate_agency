@@ -2,14 +2,12 @@ package com.komlik.service;
 
 import com.komlik.domain.Person;
 import com.komlik.repository.PersonRepository;
-import com.komlik.repository.PersonRepositoryImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @Service
 public class PersonAggServiceImpl implements PersonAggregationService {

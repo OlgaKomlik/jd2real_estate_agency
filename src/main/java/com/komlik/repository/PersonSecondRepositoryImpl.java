@@ -1,7 +1,6 @@
 package com.komlik.repository;
 
 import com.komlik.domain.Person;
-import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
@@ -9,8 +8,12 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-//@Primary
 public class PersonSecondRepositoryImpl implements PersonRepository {
+
+    @Override
+    public Person findById(Long id) {
+        return null;
+    }
 
     @Override
     public Optional<Person> findOne(Long id) {
@@ -33,8 +36,13 @@ public class PersonSecondRepositoryImpl implements PersonRepository {
     }
 
     @Override
-    public void delete(Long id) {
+    public Person delete(Long id) {
+        return null;
+    }
 
+    @Override
+    public Person findByLastId() {
+        return null;
     }
 
     @Override
@@ -50,10 +58,5 @@ public class PersonSecondRepositoryImpl implements PersonRepository {
     @Override
     public List<Person> findBirthdayPersons(LocalDateTime localDateTime) {
         return null;
-    }
-
-    @Override
-    public void searchPerson() {
-
     }
 }

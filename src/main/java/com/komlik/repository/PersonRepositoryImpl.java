@@ -2,6 +2,7 @@ package com.komlik.repository;
 
 import com.komlik.configuration.DatabaseProperties;
 import com.komlik.domain.Person;
+import com.komlik.exceptions.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.annotation.Primary;
@@ -23,8 +24,6 @@ import java.util.Optional;
 @Repository
 @Primary
 @RequiredArgsConstructor
-//bean id=userRepositoryImpl   class=UserRepositoryImpl
-//@Component
 public class PersonRepositoryImpl implements PersonRepository {
 
     private static final String ID = "id";
@@ -41,11 +40,6 @@ public class PersonRepositoryImpl implements PersonRepository {
 
     @Override
     public List<Person> findAll() {
-
-        /*
-         * 1) Driver Manager - getting connection from DB
-         * */
-
         final String findAllQuery = "select * from persons order by id desc";
 
         List<Person> result = new ArrayList<>();
@@ -55,15 +49,14 @@ public class PersonRepositoryImpl implements PersonRepository {
              Statement statement = connection.createStatement();
              ResultSet rs = statement.executeQuery(findAllQuery)
         ) {
-
             while (rs.next()) {
                 result.add(parseResultSet(rs));
             }
-            return result;
         } catch (SQLException e) {
             System.err.println(e.getMessage());
             throw new RuntimeException("SQL Issues!");
         }
+        return result;
     }
 
     private Person parseResultSet(ResultSet rs) {
@@ -80,7 +73,7 @@ public class PersonRepositoryImpl implements PersonRepository {
             person.setPhoneNum(rs.getString(PHONE_NUM));
             person.setCreated(rs.getTimestamp(CREATED));
             person.setChanged(rs.getTimestamp(CHANGED));
-            person.setIs_Deleted(rs.getBoolean(IS_DELETED));
+            person.setIsDeleted(rs.getBoolean(IS_DELETED));
         } catch (SQLException e) {
             System.err.println(e.getMessage());
             throw new RuntimeException("SQL Issues!");
@@ -111,40 +104,63 @@ public class PersonRepositoryImpl implements PersonRepository {
     public Optional<Person> findOne(Long id) {
         final String findOne = "SELECT * FROM persons WHERE id = ?";
         registerDriver();
-        String name = "";
-        String surname = "";
-        Timestamp birthDate = null;
-        String passportNum = "";
-        String phoneNum = "";
-        Timestamp created = null;
-        Timestamp changed = null;
-        boolean isDeleted = false;
+        Optional<Person> person = null;
         try (Connection connection = getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(findOne)
-        ) {
+             PreparedStatement preparedStatement = connection.prepareStatement(findOne)) {
             preparedStatement.setLong(1, id);
             ResultSet rs = preparedStatement.executeQuery();
             if (rs.next()) {
-                name = rs.getString("name");
-                surname = rs.getString("surname");
-                birthDate = rs.getTimestamp("birth_date");
-                passportNum = rs.getString("passport_num");
-                phoneNum = rs.getString("phone_num");
-                created = rs.getTimestamp("created");
-                changed = rs.getTimestamp("changed");
-                isDeleted = rs.getBoolean("is_deleted");
+                person = Optional.of(parseResultSet(rs));
             }
             rs.close();
         } catch (SQLException e) {
             System.err.println(e.getMessage());
             throw new RuntimeException("SQL Issues!");
         }
-        return Optional.of(new Person(id, name, surname, birthDate, passportNum, phoneNum, created, changed, isDeleted));
+        return person;
+    }
+
+    @Override
+    public Person findById(Long id) {
+        final String findById = "SELECT * FROM persons WHERE id = ?";
+        registerDriver();
+        Person person = null;
+        try (Connection connection = getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(findById)) {
+            preparedStatement.setLong(1, id);
+            ResultSet rs = preparedStatement.executeQuery();
+            if (rs.next()) {
+                person = parseResultSet(rs);
+            }
+            rs.close();
+        } catch (SQLException e ) {
+            throw new RuntimeException("SQL Issues!");
+        } catch (EntityNotFoundException e) {
+            throw new EntityNotFoundException("Not found users");
+        }
+        return person;
+    }
+
+    @Override
+    public Person findByLastId() {
+        final String lastIdQuery = "SELECT * FROM persons  WHERE Id = (SELECT MAX(Id) FROM persons)";
+        Person person = new Person();
+        try (Connection connection = getConnection();
+             Statement statement = connection.createStatement();
+             ResultSet rs = statement.executeQuery(lastIdQuery)) {
+            if (rs.next()) {
+                person = parseResultSet(rs);
+            }
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+            throw new RuntimeException("SQL Issues!");
+        }
+        return person;
     }
 
     @Override
     public Person create(Person person) {
-        String createQuery = "INSERT into persons (name, surname, birth_date, passport_num, phone_num, created, changed) " +
+        final String createQuery = "INSERT into persons (name, surname, birth_date, passport_num, phone_num, created, changed) " +
                 "values (?, ?, ?, ?, ?, ?, ?)";
         registerDriver();
         try (Connection connection = getConnection();
@@ -161,7 +177,7 @@ public class PersonRepositoryImpl implements PersonRepository {
             System.err.println(e.getMessage());
             throw new RuntimeException("SQL Issues!");
         }
-        return person;
+        return findByLastId();
     }
 
     @Override
@@ -176,18 +192,18 @@ public class PersonRepositoryImpl implements PersonRepository {
             preparedStatement.setString(4, person.getPassportNum());
             preparedStatement.setString(5, person.getPhoneNum());
             preparedStatement.setTimestamp(6, person.getChanged());
-            preparedStatement.setBoolean(7, person.getIs_Deleted());
+            preparedStatement.setBoolean(7, person.getIsDeleted());
             preparedStatement.setLong(8, person.getId());
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             System.err.println(e.getMessage());
             throw new RuntimeException("SQL Issues!");
         }
-        return person;
+        return findById(person.getId());
     }
 
     @Override
-    public void delete(Long id) {
+    public Person delete(Long id) {
         String deleteQuery = "UPDATE persons SET  is_Deleted = true, changed = ? WHERE id = ?";
         registerDriver();
         try (Connection connection = getConnection();
@@ -199,6 +215,7 @@ public class PersonRepositoryImpl implements PersonRepository {
             System.err.println(e.getMessage());
             throw new RuntimeException("SQL Issues!");
         }
+        return findById(id);
     }
 
     @Override
@@ -257,10 +274,5 @@ public class PersonRepositoryImpl implements PersonRepository {
             throw new RuntimeException("SQL Issues!");
         }
         return result;
-    }
-
-    @Override
-    public void searchPerson() {
-
     }
 }

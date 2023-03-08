@@ -16,10 +16,6 @@ public class PersonServiceImpl implements PersonService {
     @Autowired
     private PersonRepository personRepository;
 
-   /* public PersonServiceImpl(PersonRepository personRepository) {
-        this.personRepository = personRepository;
-    }*/
-
     @Override
     public Person findOne(Long id) {
         return null;
