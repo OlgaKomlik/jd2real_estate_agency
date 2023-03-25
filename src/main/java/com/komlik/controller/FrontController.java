@@ -2,8 +2,7 @@ package com.komlik.controller;
 
 
 import com.komlik.domain.Person;
-import com.komlik.service.PersonService;
-import com.komlik.service.PersonServiceImpl;
+import com.komlik.service.person.PersonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 

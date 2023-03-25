@@ -1,7 +1,7 @@
-package com.komlik.service;
+package com.komlik.service.person;
 
 import com.komlik.domain.Person;
-import com.komlik.repository.PersonRepository;
+import com.komlik.repository.person.PersonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

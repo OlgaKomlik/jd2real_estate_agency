@@ -1,4 +1,4 @@
-package com.komlik.service;
+package com.komlik.service.person;
 
 import java.util.Map;
 

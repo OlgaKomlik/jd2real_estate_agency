@@ -1,4 +1,4 @@
-package com.komlik.repository;
+package com.komlik.repository.person;
 
 import com.komlik.configuration.DatabaseProperties;
 import com.komlik.domain.Person;

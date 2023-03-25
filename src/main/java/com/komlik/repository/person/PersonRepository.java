@@ -1,6 +1,7 @@
-package com.komlik.repository;
+package com.komlik.repository.person;
 
 import com.komlik.domain.Person;
+import com.komlik.repository.CRUDRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
