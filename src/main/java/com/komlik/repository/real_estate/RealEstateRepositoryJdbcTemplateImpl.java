@@ -1,9 +1,11 @@
 package com.komlik.repository.real_estate;
 
 import com.komlik.domain.RealEstate;
+import com.komlik.exceptions.EntityNotFoundException;
 import com.komlik.exceptions.OwnerTypeException;
 import com.komlik.repository.rowmapper.RealEstateRowMapper;
 import lombok.RequiredArgsConstructor;
+import org.apache.log4j.Logger;
 import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -23,13 +25,22 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class RealEstateRepositoryJdbcTemplateImpl implements RealEstateRepository{
 
+    private static final Logger logger = Logger.getLogger(RealEstateRepositoryJdbcTemplateImpl.class);
+
     private final JdbcTemplate jdbcTemplate;
     private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
     private final RealEstateRowMapper realEstateRowMapper;
 
     @Override
     public RealEstate findById(Long id) {
-        return jdbcTemplate.queryForObject("select * from real_estates where id = " + id, realEstateRowMapper);
+        RealEstate realEstate;
+        try {
+            realEstate = jdbcTemplate.queryForObject("select * from real_estates where id = " + id, realEstateRowMapper);
+        } catch (RuntimeException e) {
+            logger.warn(e.getMessage());
+            throw new EntityNotFoundException("There is no id " + id);
+        }
+        return realEstate;
     }
 
     @Override

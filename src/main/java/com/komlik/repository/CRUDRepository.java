@@ -20,5 +20,5 @@ public interface CRUDRepository<K, T> {
 
     T delete(K id);
 
-    void hardDelete(K id);
+
 }
