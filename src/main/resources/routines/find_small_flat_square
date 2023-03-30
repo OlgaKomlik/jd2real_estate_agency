@@ -1,0 +1,17 @@
+create function find_small_flat_square(rooms_criteria integer) returns integer
+    language plpgsql
+as
+$$
+declare
+    itemSquare integer;
+begin
+    select min(square)
+    into itemSquare
+    from real_estates
+    where type = 'flat' and rooms = rooms_criteria;
+    return itemSquare;
+end
+$$;
+
+alter function find_small_flat_square(integer) owner to postgres;
+
