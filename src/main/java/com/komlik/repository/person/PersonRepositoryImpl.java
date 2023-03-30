@@ -218,7 +218,7 @@ public class PersonRepositoryImpl implements PersonRepository {
         return findById(id);
     }
 
-    @Override
+
     public void hardDelete(Long id) {
         final String hardDeleteQuery = "delete from users where id = ?";
         registerDriver();
