@@ -1,6 +1,8 @@
 package com.komlik;
 
 
+import com.komlik.repository.real_estate.RealEstateRepository;
+import com.komlik.service.real_estate.RealEstateService;
 import org.apache.log4j.Logger;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
@@ -25,6 +27,59 @@ public class SpringTest {
 //        System.out.println(personRepository.findById(1L));
 //        System.out.println(personRepository.findForSurnameAndName("Orlov", "Max"));
 //        System.out.println(personRepository.findBirthdayPersons(LocalDateTime.of(2023, 03, 22, 11, 15)));
+        RealEstateRepository repositoryJdbcTemplate = applicationContext.getBean("realEstateRepositoryJdbcTemplateImpl", RealEstateRepository.class);
+        RealEstateService service = applicationContext.getBean("realEstateServiceImpl", RealEstateService.class);
+//        logger.info(repositoryJdbcTemplate.findAll());
+//        logger.info(repositoryJdbcTemplate.findOne(1L));
+//        logger.info(repositoryJdbcTemplate.findById(1L));
+//        logger.info(repositoryJdbcTemplate.findByLastId());
+//        logger.info(repositoryJdbcTemplate.create(RealEstate.builder()
+//                .square(125)
+//                .rooms(4)
+//                .floors(2)
+//                .gardenSquare(100)
+//                .garage(true)
+//                .address("Nemiga, 15")
+//                .city("Minsk")
+//                .ownerPersonsId(2L)
+//                .type("house")
+//                .typeOwner("person")
+//                .build()));
+//        logger.info(repositoryJdbcTemplate.create(RealEstate.builder()
+//                .square(44)
+//                .rooms(1)
+//                .floors(12)
+//                .gardenSquare(null)
+//                .garage(null)
+//                .address("Nemiga, 18")
+//                .city("Minsk")
+//                .ownerPersonsId(3L)
+//                .type("flat")
+//                .typeOwner("person")
+//                .build()));
+//        logger.info(repositoryJdbcTemplate.update(RealEstate.builder()
+//                .id(7L).square(45)
+//                .rooms(1)
+//                .floors(12)
+//                .gardenSquare(null)
+//                .garage(null)
+//                .address("Nemiga, 18")
+//                .city("Minsk")
+//                .ownerPersonsId(3L)
+//                .type("flat")
+//                .typeOwner("person")
+//                .isDeleted(false).build()));
 
+//        logger.info(repositoryJdbcTemplate.delete(7L));
+//
+//        logger.info(repositoryJdbcTemplate.searchRealEstate("min", "fl", 50));
+
+//        logger.info(repositoryJdbcTemplate.changeOwnerPersonsId(6L, 3L));
+
+        logger.info(repositoryJdbcTemplate.findBigestFlatSquare(3));
+        logger.info(repositoryJdbcTemplate.findSmallFlatSquare(3));
+
+        logger.info(repositoryJdbcTemplate.findBigestFlat(3));
+        logger.info(repositoryJdbcTemplate.findSmallFlat(3));
     }
 }

@@ -2,8 +2,8 @@ package com.komlik;
 
 import com.komlik.configuration.DatabaseProperties;
 import com.komlik.domain.Person;
-import com.komlik.repository.PersonRepository;
-import com.komlik.repository.PersonRepositoryImpl;
+import com.komlik.repository.person.PersonRepository;
+import com.komlik.repository.person.PersonRepositoryImpl;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;

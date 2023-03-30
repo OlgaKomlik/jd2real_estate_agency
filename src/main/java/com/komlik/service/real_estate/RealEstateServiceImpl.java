@@ -18,17 +18,17 @@ public class RealEstateServiceImpl implements RealEstateService {
 
     @Override
     public RealEstate findById(Long id) {
-        return null;
+        return repository.findById(id);
     }
 
     @Override
     public Optional<RealEstate> findOne(Long id) {
-        return Optional.empty();
+        return repository.findOne(id);
     }
 
     @Override
     public RealEstate findByLastId() {
-        return null;
+        return repository.findByLastId();
     }
 
     @Override
@@ -38,26 +38,51 @@ public class RealEstateServiceImpl implements RealEstateService {
 
     @Override
     public RealEstate create(RealEstate object) {
-        return null;
+        return repository.create(object);
     }
 
     @Override
     public RealEstate update(RealEstate object) {
-        return null;
+        return repository.update(object);
     }
 
     @Override
     public RealEstate delete(Long id) {
-        return null;
+        return repository.delete(id);
     }
 
     @Override
-    public void hardDelete(Long id) {
+    public Optional<RealEstate> hardDelete(Long id) {
+        return repository.hardDelete(id);
+    }
 
+    @Override
+    public RealEstate changeOwnerPersonsId(Long realEstateId, Long newOwnerPersonsId) {
+        return repository.changeOwnerPersonsId(realEstateId, newOwnerPersonsId);
+    }
+
+    @Override
+    public Integer findBigestFlatSquare(int rooms) {
+        return repository.findBigestFlatSquare(rooms);
+    }
+
+    @Override
+    public Integer findSmallFlatSquare(int rooms) {
+        return repository.findSmallFlatSquare(rooms);
     }
 
     @Override
     public List<RealEstate> searchRealEstate(String city, String type, Integer square) {
-        return null;
+        return repository.searchRealEstate(city.toLowerCase(), type, square);
+    }
+
+    @Override
+    public List<RealEstate> findBigestFlat(int rooms) {
+        return repository.findBigestFlat(rooms);
+    }
+
+    @Override
+    public List<RealEstate> findSmallFlat(int rooms) {
+        return repository.findSmallFlat(rooms);
     }
 }
